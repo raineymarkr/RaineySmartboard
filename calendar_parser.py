@@ -15,9 +15,9 @@ if response.status_code == 200:
     lunch = soup.find('img', title = 'food')
     breakfast_img = requests.get(breakfast['src'])
     lunch_img = requests.get(lunch['src'])
-    with open('./breakfast/breakfast-menu.png', 'wb') as file:
+    with open(r'./site/public/breakfast/breakfast-menu.png', 'wb') as file:
         file.write(breakfast_img.content)
-    with open('./lunch/lunch-menu.png', 'wb') as file:
+    with open(r'./site/public/lunch/lunch-menu.png', 'wb') as file:
         file.write(lunch_img.content)
 
 breakfast_menu = []
@@ -36,7 +36,7 @@ def processImg(menu, output):
     x_offset, y_offset = 12, 10  # space between boxes, if any
     
     # Initialize the date for the first box
-    current_date = datetime(year=2024, month=1, day=1)  # Adjust the year and month accordingly
+    current_date = datetime.now()
     
     # Find the last day of the month
     last_day = calendar.monthrange(current_date.year, current_date.month)[1]
@@ -75,5 +75,5 @@ def processImg(menu, output):
         while current_date is not None and current_date.weekday() > 4 and current_date.day <= last_day:
             current_date += timedelta(days=1)
 
-processImg('breakfast-menu.png', 'breakfast')
-processImg('lunch-menu.png', 'lunch')
+processImg('breakfast-menu.png', './site/public/breakfast/')
+processImg('lunch-menu.png', './site/public/lunch/')
