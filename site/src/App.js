@@ -1,23 +1,31 @@
-import logo from './logo.svg';
 import React from 'react';
-import SchoolMenu from './components/SchoolMenu';
 import WeatherDisplay from './components/WeatherDisplay';
+import SchoolMenu from './components/SchoolMenu';
 import DateTimeDisplay from './components/DateTimeDisplay';
-import PhotoDisplay from './components/PhotoDisplay';
-import './App.css';
+import UpcomingEvents from './components/UpcomingEvents';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 function App() {
   return (
-    <div className="App">
-      <DateTimeDisplay />
-      <WeatherDisplay />
-      <SchoolMenu />
-      <PhotoDisplay />
+    <div className="container mt-4">
+      <div className="row">
+        <div className="card col-md-6">
+          <DateTimeDisplay />
+        </div>
+        <div className="card col-md-6">
+          <WeatherDisplay />
+        </div>
+      </div>
+      <div className="row mt-4">
+        <div className="card col-md-6">
+          <SchoolMenu />
+        </div>
+        <div className="card col-md-6">
+          <UpcomingEvents />
+        </div>
+      </div>
     </div>
   );
 }
 
 export default App;
-
-
-

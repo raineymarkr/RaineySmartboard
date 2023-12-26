@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './SchoolMenu.css'; // Import the CSS file
 
 const SchoolMenu = () => {
   const [date, setDate] = useState(new Date());
@@ -19,14 +20,19 @@ const SchoolMenu = () => {
 
   return (
     <div>
-      <h2>School Menu for {formattedDate}</h2>
-      <div>
-        <h3>Breakfast</h3>
-        <img src={breakfastImagePath} alt="Breakfast Menu" />
-      </div>
-      <div>
-        <h3>Lunch</h3>
-        <img src={lunchImagePath} alt="Lunch Menu" />
+      <div className="menu-container">
+        <div>
+          <center>
+          <h3>Breakfast</h3>
+          </center>
+          <img src={breakfastImagePath} alt="Breakfast Menu" />
+        </div>
+        <div>
+          <center>
+          <h3>Lunch</h3>
+          </center>
+          <img src={lunchImagePath} alt="Lunch Menu" />
+        </div>
       </div>
     </div>
   );

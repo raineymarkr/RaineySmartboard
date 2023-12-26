@@ -42,12 +42,13 @@ const WeatherDisplay = () => {
 
   return (
     <div>
+      <center>
       <h2>Weather</h2>
-      <p>Temperature High/Low: {weather.temp} °F / {weather.temp_low} °F</p>
-      <p>Feels Like: {weather.feelslike} °F</p>
-      <p>Humidity: {weather.humidity}%</p>
-      <p>Condition: {weather.conditionText}</p>
-      {weather.conditionIcon && <img src={`https:${weather.conditionIcon}`} alt="Weather Condition" />}
+      <p><h3>Temperature High/Low</h3><h4> {weather.temp} °F / {weather.temp_low} °F</h4></p>
+      <p><h3>Feels Like</h3> <h4>{weather.feelslike} °F</h4></p>
+      <p><h3>Humidity</h3> <h4>{weather.humidity}%</h4></p>
+      <p><h3>{weather.conditionText}</h3> {weather.conditionIcon && <img src={`https:${weather.conditionIcon}`} alt="Weather Condition" />}</p>
+      </center>
     </div>
   );
 };
