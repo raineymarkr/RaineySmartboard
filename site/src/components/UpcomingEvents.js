@@ -15,7 +15,25 @@ const UpcomingEvents = () => {
   useEffect(() => {
     loadScript('https://apis.google.com/js/api.js', gapiLoaded);
     loadScript('https://accounts.google.com/gsi/client', gisLoaded);
-  }, []);
+
+    const fetchEvents = async () => {
+      if (isAuthorized) {
+        await listUpcomingEvents();
+      }
+    };
+
+    // Call fetchEvents immediately if already authorized
+    if (isAuthorized) {
+      fetchEvents();
+    }
+
+    // Set up an interval to refresh events every hour
+    const intervalId = setInterval(fetchEvents, 3600000); // 3600000 milliseconds = 1 hour
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [isAuthorized]); // Add isAuthorized to dependency array to re-run effect when authorization changes
+
 
   const loadScript = (url, callback) => {
     const script = document.createElement('script');
