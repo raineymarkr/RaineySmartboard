@@ -1,68 +1,163 @@
-
 import React, { useState, useEffect } from 'react';
-import { GoogleLogin } from 'react-google-login';
 
 const UpcomingEvents = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isGapiLoaded, setIsGapiLoaded] = useState(false);
+  const [isGisLoaded, setIsGisLoaded] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [events, setEvents] = useState([]);
-  const clientId = "878017870557-5hrui1i1f6efnskq9m59eeb7kkk1sglg.apps.googleusercontent.com";
+  const [buttonText, setButtonText] = useState('Authorize');
+
+  const CLIENT_ID = "292381840802-8urm1vjdfo1qb48jrnd803el2k1fgppb.apps.googleusercontent.com"; // Replace with your actual client ID
+  const API_KEY = "AIzaSyB6ZrtEKoHoa5XqF6oNNLedqQEDf-8Oox4"; // Replace with your actual API key
+  const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
+  const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
+
   useEffect(() => {
-    // Load the Google API client library
-    const script = document.createElement('script');
-    script.src = 'https://apis.google.com/js/api.js';
-    script.onload = () => {
-      window.gapi.load('client:auth2', initGoogleSignIn);
-    };
-    document.body.appendChild(script);
+    loadScript('https://apis.google.com/js/api.js', gapiLoaded);
+    loadScript('https://accounts.google.com/gsi/client', gisLoaded);
   }, []);
 
-  const initGoogleSignIn = () => {
-    window.gapi.client.init({
-      clientId: clientId,
-      scope: 'https://www.googleapis.com/auth/calendar.events.readonly',
-    });
+  const loadScript = (url, callback) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = callback;
+    document.body.appendChild(script);
   };
 
-  const handleLogin = () => {
-    const auth2 = window.gapi.auth2.getAuthInstance();
-    auth2.signIn().then(googleUser => {
-      const token = googleUser.getAuthResponse().id_token;
-      setIsLoggedIn(true);
-      getEvents(token);
-    }).catch(error => {
-      console.error('Login failed:', error);
-      alert('Failed to login.');
-    });
+  const gapiLoaded = () => {
+    window.gapi.load('client', initializeGapiClient);
   };
 
-  const getEvents = (accessToken) => {
-    const today = new Date().toISOString();
-    fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${today}&singleEvents=true&orderBy=startTime`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    .then(response => response.json())
-    .then(data => {
-      setEvents(data.items); // Store the events in the state
-    })
-    .catch(error => console.error('Error fetching events', error));
+  const gisLoaded = () => {
+    setIsGisLoaded(true);
   };
+
+  const initializeGapiClient = async () => {
+    await window.gapi.client.init({
+      apiKey: API_KEY,
+      discoveryDocs: [DISCOVERY_DOC],
+    });
+    setIsGapiLoaded(true);
+  };
+
+  const handleAuthClick = () => {
+    const tokenClient = window.google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPES,
+      callback: (response) => {
+        if (response.error !== undefined) {
+          throw response;
+        }
+        setIsAuthorized(true);
+        setButtonText('Refresh');
+        listUpcomingEvents();
+      }
+    });
+
+    if (window.gapi.client.getToken() === null) {
+      tokenClient.requestAccessToken({ prompt: 'consent' });
+    } else {
+      tokenClient.requestAccessToken({ prompt: '' });
+    }
+  };
+
+  const handleSignoutClick = () => {
+    const token = window.gapi.client.getToken();
+    if (token !== null) {
+      window.google.accounts.oauth2.revoke(token.access_token);
+      window.gapi.client.setToken('');
+      setIsAuthorized(false);
+      setEvents([]);
+      setButtonText('Authorize');
+    }
+  };
+
+  async function listAllCalendars() {
+    try {
+      const response = await window.gapi.client.calendar.calendarList.list();
+      return response.result.items.map(calendar => calendar.id);
+    } catch (err) {
+      console.error('Error fetching calendar list:', err);
+      return [];
+    }
+  }
+  
+  const getStartOfToday = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today.toISOString();
+  };
+  
+  const getStartOfTomorrow = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    return tomorrow.toISOString();
+  };
+  
+  async function listUpcomingEvents() {
+    try {
+      const calendarIds = await listAllCalendars();
+      const allEvents = [];
+      const timeMin = getStartOfToday();
+      const timeMax = getStartOfTomorrow();
+  
+      for (const calendarId of calendarIds) {
+        const response = await window.gapi.client.calendar.events.list({
+          'calendarId': calendarId,
+          'timeMin': timeMin,
+          'timeMax': timeMax,
+          'showDeleted': false,
+          'singleEvents': true,
+          'maxResults': 10,
+          'orderBy': 'startTime',
+        });
+  
+        allEvents.push(...response.result.items);
+      }
+  
+      // Sort all events by start time
+      allEvents.sort((a, b) => new Date(a.start.dateTime || a.start.date) - new Date(b.start.dateTime || b.start.date));
+  
+      setEvents(allEvents.length ? allEvents : ['No events found for today.']);
+    } catch (err) {
+      setEvents([`Error: ${err.message}`]);
+    }
+  }
+  
+  
 
   return (
     <div>
-      {!isLoggedIn ? (
-         <button onClick={handleLogin}>Login with Google</button>
-      ) : (
-        <div>
-          <h2>Your Events</h2>
-          <ul>
-            {events.map(event => (
-              <li key={event.id}>{event.summary} - {new Date(event.start.dateTime).toLocaleString()}</li>
-            ))}
-          </ul>
-        </div>
+        <center>
+        <h4>Upcoming Events</h4>
+            <ul>
+                {events.map((event, index) => (
+                    <li key={index}>
+                    {typeof event === 'string' ? (
+                        event
+                    ) : (
+                        <>
+                        <b>{event.summary}</b>
+                        <i>
+                            {' '}
+                            {new Date(event.start.dateTime || event.start.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
+                            {new Date(event.end.dateTime || event.end.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </i>
+                        {event.location && ` ${event.location}`}
+                        </>
+                    )}
+                    </li>
+                ))}
+            </ul>
+
+      {isGapiLoaded && isGisLoaded && (
+        <>
+          <button onClick={handleAuthClick}>{buttonText}</button>
+          {isAuthorized && <button onClick={handleSignoutClick}>Sign Out</button>}
+        </>
       )}
+      </center>
     </div>
   );
 };
