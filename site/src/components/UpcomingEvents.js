@@ -78,15 +78,14 @@ const UpcomingEvents = () => {
       }
     });
 
-    tokenClient.requestAccessToken({ prompt: 'consent' });
-  };
-
     if (window.gapi.client.getToken() === null) {
       tokenClient.requestAccessToken({ prompt: 'consent' });
     } else {
       tokenClient.requestAccessToken({ prompt: '' });
-    }
   };
+}
+
+    
 
   const handleSignoutClick = () => {
     const token = window.gapi.client.getToken();
