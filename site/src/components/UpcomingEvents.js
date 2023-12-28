@@ -24,8 +24,11 @@ const UpcomingEvents = () => {
     }
 
     const fetchEvents = async () => {
-      if (isAuthorized) {
+      if (isAuthorized && isTokenValid()) {
         await listUpcomingEvents();
+      } else if (isAuthorized && !isTokenValid()) {
+        // Token is expired. Handle re-authentication or token refresh.
+        handleAuthClick(); // Example: Prompt for re-authentication
       }
     };
 
@@ -70,7 +73,9 @@ const UpcomingEvents = () => {
         if (response.error !== undefined) {
           throw response;
         }
-        localStorage.setItem('gapi_token', response.access_token); // Save token to local storage
+        const expiresAt = new Date().getTime() + response.expires_in * 1000;
+        localStorage.setItem('gapi_token', response.access_token);
+        localStorage.setItem('gapi_token_expires_at', expiresAt); // Save expiry time
         window.gapi.client.setToken(response);
         setIsAuthorized(true);
         setButtonText('Refresh');
@@ -85,7 +90,11 @@ const UpcomingEvents = () => {
   };
 }
 
-    
+// Call this function before making an API call
+const isTokenValid = () => {
+  const expiresAt = localStorage.getItem('gapi_token_expires_at');
+  return new Date().getTime() < expiresAt;
+};    
 
   const handleSignoutClick = () => {
     const token = window.gapi.client.getToken();
