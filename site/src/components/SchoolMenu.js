@@ -39,14 +39,15 @@ const SchoolMenu = () => {
         <div>
           <center>
             <h3>Breakfast</h3>
+          <img src={breakfastImagePath} className="menu-image p-4" alt="Breakfast Menu" />
           </center>
-          <img src={breakfastImagePath} className="img-fluid p-4" alt="Breakfast Menu" />
         </div>
         <div>
           <center>
             <h3>Lunch</h3>
+
+          <img src={lunchImagePath} className="menu-image p-4" alt="Lunch Menu" />
           </center>
-          <img src={lunchImagePath} className="img-fluid p-4" alt="Lunch Menu" />
         </div>
       </div>
     </div>

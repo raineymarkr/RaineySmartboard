@@ -3,4 +3,11 @@
     justify-content: space-around;
     align-items: center;
   }
+
+  .menu-image {
+    width: 125%;
+    height: auto;
+    max-width: 125%;
+  }
+  
   

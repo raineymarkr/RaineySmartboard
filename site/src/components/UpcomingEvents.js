@@ -175,7 +175,7 @@ const isTokenValid = () => {
   return (
     <div>
         <center>
-        <h4>Upcoming Events</h4>
+        <h2>Upcoming Events</h2>
             <ul>
                 {events.map((event, index) => (
                     <li key={index}>
@@ -183,12 +183,12 @@ const isTokenValid = () => {
                         event
                     ) : (
                         <>
-                        <b>{event.summary}</b>
-                        <i>
+                        <h3>{event.summary}</h3>
+                        <h4><i>
                             {' '}
                             {new Date(event.start.dateTime || event.start.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
                             {new Date(event.end.dateTime || event.end.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </i>
+                        </i></h4>
                         {event.location && ` ${event.location}`}
                         </>
                     )}

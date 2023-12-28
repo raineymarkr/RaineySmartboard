@@ -49,7 +49,7 @@ const DateTimeDisplay = () => {
 
   return (
     <div>
-      <center><h2>{currentDate}</h2></center>
+      <center><h1>{currentDate}</h1></center>
       <AnalogClock />
     </div>
   );

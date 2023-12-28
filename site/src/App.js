@@ -5,6 +5,7 @@ import DateTimeDisplay from './components/DateTimeDisplay';
 import UpcomingEvents from './components/UpcomingEvents';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
+
 function App() {
   return (
     <div className="container main mt-1">
