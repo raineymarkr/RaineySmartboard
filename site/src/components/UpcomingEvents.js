@@ -15,31 +15,31 @@ const UpcomingEvents = () => {
   useEffect(() => {
     loadScript('https://apis.google.com/js/api.js', gapiLoaded);
     loadScript('https://accounts.google.com/gsi/client', gisLoaded);
-
-    // Check for existing token in local storage
-    const existingToken = localStorage.getItem('gapi_token');
-    if (existingToken) {
-      window.gapi.client.setToken({ access_token: existingToken });
-      setIsAuthorized(true);
-    }
-
-    const fetchEvents = async () => {
-      if (isAuthorized && isTokenValid()) {
-        await listUpcomingEvents();
-      } else if (isAuthorized && !isTokenValid()) {
-        // Token is expired. Handle re-authentication or token refresh.
-        handleAuthClick(); // Example: Prompt for re-authentication
+    if (isGapiLoaded)
+    {  // Check for existing token in local storage
+      const existingToken = localStorage.getItem('gapi_token');
+      if (existingToken) {
+        window.gapi.client.setToken({ access_token: existingToken });
+        setIsAuthorized(true);
       }
-    };
 
-    if (isAuthorized) {
-      fetchEvents();
-    }
+      const fetchEvents = async () => {
+        if (isAuthorized && isTokenValid()) {
+          await listUpcomingEvents();
+        } else if (isAuthorized && !isTokenValid()) {
+          // Token is expired. Handle re-authentication or token refresh.
+          handleAuthClick(); // Example: Prompt for re-authentication
+        }
+      };
 
-    const intervalId = setInterval(fetchEvents, 3600000);
+      if (isAuthorized) {
+        fetchEvents();
+      }
 
-    return () => clearInterval(intervalId);
-  }, [isAuthorized]);// Add isAuthorized to dependency array to re-run effect when authorization changes
+      const intervalId = setInterval(fetchEvents, 3600000);
+
+      return () => clearInterval(intervalId);}
+  }, [isAuthorized, isGapiLoaded]);// Add isAuthorized to dependency array to re-run effect when authorization changes
 
 
   const loadScript = (url, callback) => {
@@ -58,11 +58,20 @@ const UpcomingEvents = () => {
   };
 
   const initializeGapiClient = async () => {
-    await window.gapi.client.init({
-      apiKey: API_KEY,
-      discoveryDocs: [DISCOVERY_DOC],
-    });
-    setIsGapiLoaded(true);
+    if (!window.gapi) {
+      console.error("Google API script not loaded");
+      return;
+    }
+  
+    try {
+      await window.gapi.client.init({
+        apiKey: API_KEY,
+        discoveryDocs: [DISCOVERY_DOC],
+      });
+      setIsGapiLoaded(true);
+    } catch (error) {
+      console.error("Error initializing Google API client:", error);
+    }
   };
 
   const handleAuthClick = () => {
@@ -188,7 +197,7 @@ const isTokenValid = () => {
             </ul>
 
       {isGapiLoaded && isGisLoaded && (
-        <>
+        <><br></br><br></br>
           <button onClick={handleAuthClick}>{buttonText}</button>
           {isAuthorized && <button onClick={handleSignoutClick}>Sign Out</button>}
         </>

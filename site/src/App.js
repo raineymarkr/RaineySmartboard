@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 function App() {
   return (
-    <div className="container main mt-4">
+    <div className="container main mt-1">
       <div className="row">
         <div className="card col-md-6  bg-info">
           <DateTimeDisplay />
@@ -16,7 +16,7 @@ function App() {
           <WeatherDisplay />
         </div>
       </div>
-      <div className="row mt-4">
+      <div className="row mt-1">
         <div className="card col-md-6 bg-info">
           <SchoolMenu />
         </div>

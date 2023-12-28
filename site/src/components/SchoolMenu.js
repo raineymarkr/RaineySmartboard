@@ -2,19 +2,15 @@ import React, { useState, useEffect } from 'react';
 import './SchoolMenu.css'; // Import the CSS file
 
 const SchoolMenu = () => {
-  const [date, setDate] = useState(new Date());
+  // Get the current date and format it to yyyy-mm-dd
+  const date = new Date();
+  // Format the current date to yyyy-mm-dd
+  const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setDate(new Date());
-    }, 86400000); // Update date every 24 hours
-    return () => clearInterval(timer);
-  }, []);
 
-  // Format the date to yyyy-mm-dd
-  const formattedDate = date.toISOString().split('T')[0];
-
-  // Construct file paths
+  // Construct file paths for today's menu
   const breakfastImagePath = `./breakfast/${formattedDate}.png`;
   const lunchImagePath = `./lunch/${formattedDate}.png`;
 
@@ -23,15 +19,15 @@ const SchoolMenu = () => {
       <div className="menu-container">
         <div>
           <center>
-          <h3>Breakfast</h3>
+            <h3>Breakfast</h3>
           </center>
-          <img src={breakfastImagePath} alt="Breakfast Menu" />
+          <img src={breakfastImagePath} className="img-fluid p-4" alt="Breakfast Menu" />
         </div>
         <div>
           <center>
-          <h3>Lunch</h3>
+            <h3>Lunch</h3>
           </center>
-          <img src={lunchImagePath} alt="Lunch Menu" />
+          <img src={lunchImagePath} className="img-fluid p-4" alt="Lunch Menu" />
         </div>
       </div>
     </div>
