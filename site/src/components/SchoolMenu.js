@@ -3,6 +3,8 @@ import './SchoolMenu.css'; // Import the CSS file
 
 const SchoolMenu = () => {
   const [date, setDate] = useState(new Date());
+  const [breakfastImagePath, setBreakfastImagePath] = useState('');
+  const [lunchImagePath, setLunchImagePath] = useState('');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -23,13 +25,12 @@ const SchoolMenu = () => {
       .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 
     // Construct file paths for today's menu
-    const breakfastImagePath = `./breakfast/${formattedDate}.png`;
-    const lunchImagePath = `./lunch/${formattedDate}.png`;
+    const newBreakfastImagePath = `./breakfast/${formattedDate}.png`;
+    const newLunchImagePath = `./lunch/${formattedDate}.png`;
 
-    // Fetch the menu images or perform any necessary rendering
-    // Example: you can set these paths in the state or render them directly
-    console.log('Breakfast Menu Path:', breakfastImagePath);
-    console.log('Lunch Menu Path:', lunchImagePath);
+    // Set the menu paths in state
+    setBreakfastImagePath(newBreakfastImagePath);
+    setLunchImagePath(newLunchImagePath);
   };
 
   return (
@@ -39,13 +40,13 @@ const SchoolMenu = () => {
           <center>
             <h3>Breakfast</h3>
           </center>
-          {/* You can render the menu images here if needed */}
+          <img src={breakfastImagePath} className="img-fluid p-4" alt="Breakfast Menu" />
         </div>
         <div>
           <center>
             <h3>Lunch</h3>
           </center>
-          {/* You can render the menu images here if needed */}
+          <img src={lunchImagePath} className="img-fluid p-4" alt="Lunch Menu" />
         </div>
       </div>
     </div>
