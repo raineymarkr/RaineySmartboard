@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import './UpcomingEvents.css'
+
 
 const UpcomingEvents = () => {
   const [isGapiLoaded, setIsGapiLoaded] = useState(false);
@@ -6,9 +8,10 @@ const UpcomingEvents = () => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [events, setEvents] = useState([]);
   const [buttonText, setButtonText] = useState('Authorize');
-
-  const CLIENT_ID = "292381840802-8urm1vjdfo1qb48jrnd803el2k1fgppb.apps.googleusercontent.com"; // Replace with your actual client ID
-  const API_KEY = "AIzaSyB6ZrtEKoHoa5XqF6oNNLedqQEDf-8Oox4"; // Replace with your actual API key
+  const [dateOffset, setDateOffset] = useState(0);
+  const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
+  const API_KEY = process.env.REACT_APP_API_KEY;
+  
   const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
   const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 
@@ -18,9 +21,12 @@ const UpcomingEvents = () => {
     if (isGapiLoaded)
     {  // Check for existing token in local storage
       const existingToken = localStorage.getItem('gapi_token');
-      if (existingToken) {
+      if (existingToken && isTokenValid()) {
         window.gapi.client.setToken({ access_token: existingToken });
         setIsAuthorized(true);
+      } else if (existingToken) {
+        // Token exists but is expired, handle re-authentication
+        handleAuthClick();
       }
 
       const fetchEvents = async () => {
@@ -36,7 +42,7 @@ const UpcomingEvents = () => {
         fetchEvents();
       }
 
-      const intervalId = setInterval(fetchEvents, 3600000);
+      const intervalId = setInterval(fetchEvents, 1800000);
 
       return () => clearInterval(intervalId);}
   }, [isAuthorized, isGapiLoaded]);// Add isAuthorized to dependency array to re-run effect when authorization changes
@@ -127,25 +133,52 @@ const isTokenValid = () => {
     }
   }
   
-  const getStartOfToday = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today.toISOString();
+  const adjustDate = (days) => {
+    setDateOffset(prevOffset => {
+      let newOffset;
+      const newDate = new Date();
+  
+      if (days === 0) {
+        // Reset to current date
+        newOffset = 0;
+        newDate.setDate(newDate.getDate()); // This line actually doesn't change the date, so it's optional
+      } else {
+        // Adjust date by the specified number of days
+        newOffset = prevOffset + days;
+        newDate.setDate(newDate.getDate() + newOffset);
+      }
+  
+      setCurrentDate(getFormattedDate(newDate));
+      return newOffset;
+    });
   };
   
-  const getStartOfTomorrow = () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-    return tomorrow.toISOString();
+
+  const getAdjustedDate = () => {
+    const adjustedDate = new Date();
+    adjustedDate.setDate(adjustedDate.getDate() + dateOffset);
+    return adjustedDate;
   };
-  
+
+  const getStartOfAdjustedDate = () => {
+    const adjustedDate = getAdjustedDate();
+    adjustedDate.setHours(0, 0, 0, 0);
+    return adjustedDate.toISOString();
+  };
+
+  const getStartOfNextAdjustedDate = () => {
+    const adjustedDate = getAdjustedDate();
+    adjustedDate.setDate(adjustedDate.getDate() + 1);
+    adjustedDate.setHours(0, 0, 0, 0);
+    return adjustedDate.toISOString();
+  };
+
   async function listUpcomingEvents() {
     try {
       const calendarIds = await listAllCalendars();
       const allEvents = [];
-      const timeMin = getStartOfToday();
-      const timeMax = getStartOfTomorrow();
+      const timeMin = getStartOfAdjustedDate();
+      const timeMax = getStartOfNextAdjustedDate();
   
       for (const calendarId of calendarIds) {
         const response = await window.gapi.client.calendar.events.list({
@@ -169,13 +202,48 @@ const isTokenValid = () => {
       setEvents([`Error: ${err.message}`]);
     }
   }
+
+  const   months = {
+    1 : 'January',
+    2 : 'February',
+    3 : 'March',
+    4 : 'April',
+    5 : 'May',
+    6 : 'June',
+    7 : 'July',
+    8 : 'August',
+    9 : 'September',
+    10 : 'October',
+    11 : 'November',
+    12 : 'December'
+  }
+
+  const getFormattedDate = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // Months start from 0
+    const day = date.getDate();
+    return `${months[month]} ${day < 10 ? `0${day}` : day},  ${year}`;
+  };
+  const [currentDate, setCurrentDate] = useState(getFormattedDate(new Date()));
+
+  useEffect(() => {
+    if (isAuthorized && isGapiLoaded) {
+      listUpcomingEvents();
+    }
+  }, [dateOffset, isAuthorized, isGapiLoaded]);
   
   
 
   return (
     <div>
         <center>
-        <h2>Upcoming Events</h2>
+        <h2><b><u>Upcoming Events</u></b></h2>
+        <div class="date-navigation">
+        <button onClick={() => adjustDate(0)}>⏺</button>
+        <button onClick={() => adjustDate(-1)}>◀️</button>
+        <h3><b><u>{currentDate}</u></b></h3>
+        <button onClick={() => adjustDate(1)}>▶️</button>
+        </div>
             <ul>
                 {events.map((event, index) => (
                     <li key={index}>

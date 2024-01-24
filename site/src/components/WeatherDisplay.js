@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './WeatherDisplay.css'
 
 const WeatherDisplay = () => {
   const [weather, setWeather] = useState({
@@ -43,7 +44,7 @@ const WeatherDisplay = () => {
 
     // Fetch weather data immediately and then set an interval
     fetchWeather();
-    const intervalId = setInterval(fetchWeather, 3600000); // 3600000 milliseconds = 1 hour
+    const intervalId = setInterval(fetchWeather, 1800000); // 3600000 milliseconds = 1 hour
 
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId);
@@ -55,7 +56,9 @@ const WeatherDisplay = () => {
         <h2><b><u>Temperature High/Low</u></b></h2><h3> {weather.temp} °F / {weather.temp_low} °F</h3>
         <h2><b><u>Feels Like</u></b></h2> <h3>{weather.feelslike} °F</h3>
         <h2><b><u>Humidity</u></b></h2> <h3>{weather.humidity}%</h3>
-        <h2>{weather.conditionText}</h2> {weather.conditionIcon && <img src={`https:${weather.conditionIcon}`} alt="Weather Condition" />}
+        <div className='condition'>
+        {weather.conditionIcon && <img src={`https:${weather.conditionIcon}`} alt="Weather Condition" />} <h2>{weather.conditionText}</h2> 
+        </div>
       </center>
     </div>
   );

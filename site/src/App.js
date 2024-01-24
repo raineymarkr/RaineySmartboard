@@ -11,7 +11,8 @@ function App() {
     <div className="container main mt-1">
       <div className="row">
         <div className="card col-md-6  bg-info">
-          <DateTimeDisplay />
+          <UpcomingEvents />
+          
         </div>
         <div className="card col-md-6 bg-info">
           <WeatherDisplay />
@@ -22,7 +23,7 @@ function App() {
           <SchoolMenu />
         </div>
         <div className="card col-md-6 bg-info">
-          <UpcomingEvents />
+          <DateTimeDisplay />
         </div>
       </div>
     </div>

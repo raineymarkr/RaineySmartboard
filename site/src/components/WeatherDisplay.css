@@ -1,0 +1,5 @@
+.condition {
+  display: flex;
+  align-items: center; /* This will vertically align your items in the middle */
+  justify-content: center; /* This centers the items horizontally */
+}

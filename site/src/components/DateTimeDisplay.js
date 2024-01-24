@@ -1,6 +1,6 @@
-import AnalogClock from './AnalogClock';
-
 import React, { useState, useEffect } from 'react';
+import './DateTimeDisplay.css';
+
 const   months = {
   1 : 'January',
   2 : 'February',
@@ -26,11 +26,20 @@ const DateTimeDisplay = () => {
   };
 
   const getFormattedTime = (date) => {
-    const hours = date.getHours();
+    let hours = date.getHours();
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
-    return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+  
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const formattedHours = hours < 10 ? `0${hours}` : hours;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+  
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds} ${ampm}`;
   };
+  
 
   const [currentDate, setCurrentDate] = useState(getFormattedDate(new Date()));
   const [currentTime, setCurrentTime] = useState(getFormattedTime(new Date()));
@@ -48,9 +57,11 @@ const DateTimeDisplay = () => {
   }, []);
 
   return (
+            
     <div>
       <center><h1>{currentDate}</h1></center>
-      <AnalogClock />
+      <br></br><br></br>
+      <center><h1 className='clock'>{currentTime}</h1></center>
     </div>
   );
 };

@@ -10,7 +10,7 @@ const SchoolMenu = () => {
     const timer = setInterval(() => {
       // Update the date to the current date
       setDate(new Date());
-    }, 86400000); // Update date every 24 hours (adjust as needed)
+    }, 1800000); // Update date every 24 hours (adjust as needed)
 
     // Initial menu load
     fetchMenu();

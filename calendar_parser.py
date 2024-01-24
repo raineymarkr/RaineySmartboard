@@ -77,3 +77,4 @@ def processImg(menu, output):
 
 processImg('breakfast-menu.png', './site/public/breakfast/')
 processImg('lunch-menu.png', './site/public/lunch/')
+print('done!')

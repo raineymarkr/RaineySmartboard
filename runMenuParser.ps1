@@ -1,11 +1,14 @@
-# PowerShell Script to Run Python Script
-
-# Path to the Python executable
-# Update the path if your Python executable is located elsewhere
-$pythonExe = "C:\Users\mark.rainey\AppData\Local\Programs\Python\Python311\python.exe"
-
 # Path to the Python script
 $scriptPath = "C:\Users\mark.rainey\smartboard\calendar_parser.py"
 
-# Running the Python script
-& $pythonExe $scriptPath
+# Check if the script file exists
+if (Test-Path $scriptPath) {
+    try {
+        # Running the Python script
+        & py $scriptPath
+    } catch {
+        Write-Error "An error occurred while running the script: $_"
+    }
+} else {
+    Write-Error "Script file not found at path: $scriptPath"
+}
