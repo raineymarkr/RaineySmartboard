@@ -10,7 +10,7 @@ const WeatherDisplay = () => {
     conditionIcon: null,
     conditionText: null
   });
-
+ 
   useEffect(() => {
     const fetchWeather = () => {
       const apiKey = process.env.REACT_APP_WEATHER_KEY;
