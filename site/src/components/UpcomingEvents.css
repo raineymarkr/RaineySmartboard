@@ -7,3 +7,14 @@
 .date-navigation h3 {
     margin: 0 10px; /* Add some spacing around the header */
 }
+
+
+.event{
+    display: flex;
+    align-items: center; /* This will vertically align your items in the middle */
+    justify-content: center; /* This centers the items horizontally */
+}
+
+.event h4{
+    padding: 10px
+}

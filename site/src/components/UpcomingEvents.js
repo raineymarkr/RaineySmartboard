@@ -42,7 +42,7 @@ const UpcomingEvents = () => {
         fetchEvents();
       }
 
-      const intervalId = setInterval(fetchEvents, 1800000);
+      const intervalId = setInterval(fetchEvents, 600000);
 
       return () => clearInterval(intervalId);}
   }, [isAuthorized, isGapiLoaded]);// Add isAuthorized to dependency array to re-run effect when authorization changes
@@ -244,25 +244,24 @@ const isTokenValid = () => {
         <h3><b><u>{currentDate}</u></b></h3>
         <button onClick={() => adjustDate(1)}>▶️</button>
         </div>
-            <ul>
+            <ol>
                 {events.map((event, index) => (
                     <li key={index}>
                     {typeof event === 'string' ? (
                         event
                     ) : (
-                        <>
-                        <h3>{event.summary}</h3>
-                        <h4><i>
-                            {' '}
+                        <div class="event">
+                        <h4>{event.summary}</h4>
+                        <i>
                             {new Date(event.start.dateTime || event.start.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
                             {new Date(event.end.dateTime || event.end.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </i></h4>
+                        </i>
                         {event.location && ` ${event.location}`}
-                        </>
+                        </div>
                     )}
                     </li>
                 ))}
-            </ul>
+            </ol>
 
       {isGapiLoaded && isGisLoaded && (
         <><br></br><br></br>

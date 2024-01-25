@@ -36,7 +36,8 @@ def processImg(menu, output):
     x_offset, y_offset = 12, 10  # space between boxes, if any
     
     # Initialize the date for the first box
-    current_date = datetime.now()
+    today = datetime.now()
+    current_date = datetime(today.year, today.month, 1)  # First day of the current month
     
     # Find the last day of the month
     last_day = calendar.monthrange(current_date.year, current_date.month)[1]

@@ -13,7 +13,7 @@ const WeatherDisplay = () => {
 
   useEffect(() => {
     const fetchWeather = () => {
-      const apiKey = '87d88f77e2744a8c9a7195509232612';
+      const apiKey = process.env.REACT_APP_WEATHER_KEY;
       const query = '36609';
       const days = 1;
       const aqi = 'yes';
@@ -44,7 +44,7 @@ const WeatherDisplay = () => {
 
     // Fetch weather data immediately and then set an interval
     fetchWeather();
-    const intervalId = setInterval(fetchWeather, 1800000); // 3600000 milliseconds = 1 hour
+    const intervalId = setInterval(fetchWeather, 600000); // 3600000 milliseconds = 1 hour
 
     // Cleanup the interval on component unmount
     return () => clearInterval(intervalId);

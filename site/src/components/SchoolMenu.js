@@ -8,9 +8,10 @@ const SchoolMenu = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      // Update the date to the current date
-      setDate(new Date());
-    }, 1800000); // Update date every 24 hours (adjust as needed)
+      const newDate = new Date();
+      setDate(newDate);
+      fetchMenu(); // Call fetchMenu here to use the updated date
+    }, 1800000);// Update date every 24 hours (adjust as needed)
 
     // Initial menu load
     fetchMenu();
@@ -39,14 +40,14 @@ const SchoolMenu = () => {
         <div>
           <center>
             <h3>Breakfast</h3>
-          <img src={breakfastImagePath} className="menu-image p-4" alt="Breakfast Menu" />
+          <img src={breakfastImagePath} className="menu-image p-3" alt="Breakfast Menu" />
           </center>
         </div>
         <div>
           <center>
             <h3>Lunch</h3>
 
-          <img src={lunchImagePath} className="menu-image p-4" alt="Lunch Menu" />
+          <img src={lunchImagePath} className="menu-image p-3" alt="Lunch Menu" />
           </center>
         </div>
       </div>
